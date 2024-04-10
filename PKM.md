@@ -87,3 +87,38 @@ val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
 ```
 위 코드를 사용하여 데이터셋으로 인한 메모리 병목현상을 방지할 수 있다.
+
+이제 신경망을 생성한다.
+```
+embedding_dim = 16
+model = tf.keras.Sequential([
+  layers.Embedding(max_features + 1, embedding_dim),
+  layers.Dropout(0.2),
+  layers.GlobalAveragePooling1D(),
+  layers.Dropout(0.2),
+  layers.Dense(1)])
+
+model.summary()
+```
+```
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ embedding (Embedding)       (None, None, 16)          160016    
+                                                                 
+ dropout (Dropout)           (None, None, 16)          0         
+                                                                 
+ global_average_pooling1d (  (None, 16)                0         
+ GlobalAveragePooling1D)                                         
+                                                                 
+ dropout_1 (Dropout)         (None, 16)                0         
+                                                                 
+ dense (Dense)               (None, 1)                 17        
+                                                                 
+=================================================================
+Total params: 160033 (625.13 KB)
+Trainable params: 160033 (625.13 KB)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________
+```
