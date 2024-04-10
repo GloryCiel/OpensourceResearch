@@ -53,4 +53,4 @@ raw_val_ds = tf.keras.utils.text_dataset_from_directory(
     subset='validation', 
     seed=seed)
 ```
-    
+다음에는 데이터를 표준화와, 토큰화, 벡터화하는 과정을 거쳐야하는데 표준화는 
