@@ -53,4 +53,37 @@ raw_val_ds = tf.keras.utils.text_dataset_from_directory(
     subset='validation', 
     seed=seed)
 ```
-다음에는 데이터를 표준화와, 토큰화, 벡터화하는 과정을 거쳐야하는데 표준화는 
+다음에는 데이터를 표준화와, 토큰화, 벡터화하는 과정을 거쳐야하는데 표준화는 불필요한 요소를 제거, 토큰화는 문자열을 토큰단위로 분리, 벡터화는 이를 숫자로 변환하여 신경망과 호환되게 하는 것을 의미한다.
+이때 텐서플로우에서 제공하는 tf.keras.layers.TextVectorization을 사용한다.
+```
+max_features = 10000
+sequence_length = 250
+
+vectorize_layer = layers.TextVectorization(
+    standardize=custom_standardization,
+    max_tokens=max_features,
+    output_mode='int',
+    output_sequence_length=sequence_length)
+```
+이 레이어를 사용하여 표준화, 토큰화, 벡터화를 수행한다.
+sequence_length 상수를 주어 시퀀스를 정확히 맞출 수 있도록 한다.
+```
+# Make a text-only dataset (without labels), then call adapt
+train_text = raw_train_ds.map(lambda x, y: x)
+vectorize_layer.adapt(train_text)
+```
+위 과정은 adapt를 호출하여 문자열 인덱스를 정수로 빌드할 수 있도록 한다.
+```
+train_ds = raw_train_ds.map(vectorize_text)
+val_ds = raw_val_ds.map(vectorize_text)
+test_ds = raw_test_ds.map(vectorize_text)
+```
+최종 전처리 단계로 이전에 생성한 TextVectorization 레이어를 훈련, 검증 및 테스트 데이터세트에 적용한다.
+```
+AUTOTUNE = tf.data.AUTOTUNE
+
+train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
+val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
+test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
+```
+위 코드를 사용하여 데이터셋으로 인한 메모리 병목현상을 방지할 수 있다.
