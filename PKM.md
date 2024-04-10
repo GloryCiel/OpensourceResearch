@@ -122,3 +122,44 @@ Trainable params: 160033 (625.13 KB)
 Non-trainable params: 0 (0.00 Byte)
 _________________________________________________________________
 ```
+첫번째 레이어는 Embedding레이어로 정수로 인코딩된 리뷰를 입력받고 해당하는 임베딩 벡터를 찾는다.
+두번째 GlobalAveragePooling1D 층은 sequence 차원에 대해 평균을 계산하여 각 샘플에 대해 고정된 길이의 출력 벡터를 반환한다.
+세번째는 하나의 출력노드를 가진 연결층으로 sigmoid함수를 이용해 0과 1사이 값을 출력한다.
+
+이제 손실함수와 옵티마이저를 준비해야한다. 
+```
+model.compile(loss=losses.BinaryCrossentropy(from_logits=True),
+              optimizer='adam',
+              metrics=tf.metrics.BinaryAccuracy(threshold=0.0))
+```
+확률을 출력하는 이진분류이므로 binary_crossentropy를 사용한다.
+
+dataset 개체를 fit 메서드에 전달하여 모델을 훈련시킨다.
+```
+epochs = 10
+history = model.fit(
+    train_ds,
+    validation_data=val_ds,
+    epochs=epochs)
+```
+모델을 평가하기 위해 손실값과 정확도를 반환한다.
+```
+loss, accuracy = model.evaluate(test_ds)
+
+print("Loss: ", loss)
+print("Accuracy: ", accuracy)
+```
+```
+782/782 [==============================] - 3s 4ms/step - loss: 0.3108 - binary_accuracy: 0.8724
+Loss:  0.31077080965042114
+Accuracy:  0.8723599910736084
+```
+약 87%의 정확도임을 볼 수 있다.
+model.fit()으로 History객체를 반환해 정확도와 손실그래프를 그릴 수 있다.
+![image](https://github.com/GloryCiel/OpensourceResearch/assets/113595521/d300e3cd-8d0d-4540-9089-abe9523ccafe)
+![image](https://github.com/GloryCiel/OpensourceResearch/assets/113595521/77e2f3c7-1962-4a4e-b93f-be3fcf561a50)
+그래프에서 점선은 훈련의 손실과 정확도, 실선은 검증 손실과 검증 정확도이다.
+검증 선의 결과는 epoch에 비례해 증가하지 않는데, 이는 과대적합 때문이다.
+모델이 과도하게 최적화되어 일반화되지않은 데이터의 특징을 학습하기 때문이다.
+텐서플로우 케라스에서 제공하는 콜백메서드를 활용해 검증정확도가 증가하지 않으면 학습을 중단할 수 있다.
+
