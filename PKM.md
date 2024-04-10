@@ -1,6 +1,6 @@
 tensorflow는 텍스트 분류 또한 가능하다.
 그 예로 IMDB 데이터셋에 대한 이진 분류기를 학습시킬 수 있다.
-
+```
 import matplotlib.pyplot as plt
 import os
 import re
@@ -10,6 +10,7 @@ import tensorflow as tf
 
 from tensorflow.keras import layers
 from tensorflow.keras import losses
+```
 
 tensorflow를 import하고 keras에서 layers와 losses도 동일하게 import해주었다.
 
