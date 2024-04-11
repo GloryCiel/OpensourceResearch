@@ -22,7 +22,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 ```
 
-기본적인 데이터 분류를 위한 pandas, matplotlib와 모델 학습를 위해 keras를, 이후 ROC와 PR-AUC를 통한 평가를 위한 sklearn을 import한다.
+기본적인 데이터 분류를 위한 pandas, matplotlib와 모델 학습를 위해 keras를, 이후 ROC와 PR-AUC를 통한 평가를 위한 sklearn을 import한다.  
 
 ### 데이터 전처리
 
@@ -145,6 +145,27 @@ def make_model(metrics=METRICS, output_bias=None):
 ```
 initial_weights = os.path.join(tempfile.mkdtemp(), 'initial_weights')
 model.save_weights(initial_weights)
+
 model = make_model()
 model.load_weights(initial_weights)
 ```
+
+
+모델을 비교하는 방법은 다양하지만 그 중 유용하게 사용하는 방식으로 ROC 곡선과 P-R 곡선(PR-AUC)가 있다.
+
+두 곡선 모두 *sklearn.metrics* 에서 제공되어 쉽게 사용 가능하다. 아래는 해당 함수의 일반적인 사용법이며 plt에 그리는 방식은 일반적인 방식을 따른다.
+
+```
+def plot_roc(name, labels, predictions, **kwargs):
+  fp, tp, _ = sklearn.metrics.roc_curve(labels, predictions)
+
+def plot_prc(name, labels, predictions, **kwargs):
+    precision, recall, _ = sklearn.metrics.precision_recall_curve(labels, predictions)
+```
+
+일반적인 데이터 셋의 경우 위의 과정으로 생성한 그래프로 충분히 모델 학습이 가능하나, 불균형 데이터 셋의 경우 소수 클래스의 비율이 매우 부족하기에 소수 클래스에 대해 가중치를 두는 편이 모델 평가에 용이하다.
+
+위의 모델 생성처럼 모델에 가중치를 주어 학습한 뒤 새로 ROC 곡선과 P-R 곡선을 그려 비교하면 그 차이는 다음과 같이 나타난다.
+
+![weighted ROC](https://github.com/GloryCiel/OpensourceResearch/assets/63404135/552d5fe4-4898-4486-af93-0109076ed3ba)
+![weighted PR AUC](https://github.com/GloryCiel/OpensourceResearch/assets/63404135/72ddf27f-5b0c-4328-adac-1e4849deefcc)
