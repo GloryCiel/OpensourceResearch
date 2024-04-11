@@ -24,6 +24,8 @@ from sklearn.preprocessing import StandardScaler
 
 기본적인 데이터 분류를 위한 pandas, matplotlib와 모델 학습를 위해 keras를, 이후 ROC와 PR-AUC를 통한 평가를 위한 sklearn을 import한다.
 
+### 데이터 전처리
+
 Kaggle에서 가져온 데이터는 총 284,807건의 거래에서 492건의 부정거래를 포함하고 있다.
 
 불균형 데이터 분류는 소수 클래스에 해당하는 학습할 샘플이 거의 없기 때문에 모델 학습에 데이터를 적용할 때 주의해야하며, 가능한 많은 샘플을 수집하고, 모델이 소수 클래스를 최대한 효과적으로 활용할 수 있도록 어떤 피쳐가 관련되어 있는지에 주의해야 한다.
@@ -98,3 +100,51 @@ _ = plt.suptitle("Negative distribution")
 ![Positive distribution](https://github.com/GloryCiel/OpensourceResearch/assets/63404135/7a7e4790-a386-4ea2-a7b3-8a35b0241caa)
 ![Negative distribution](https://github.com/GloryCiel/OpensourceResearch/assets/63404135/00e3999e-31c3-46da-ac9e-5f6d4041be71)
 
+
+### 모델 학습 및 평가
+
+모델은 다양한 방법으로 구축할 수 있다. 아래는 TensorFlow의 예제에서 제공한 모델 생성 함수이다.
+
+```
+METRICS = [
+      keras.metrics.TruePositives(name='tp'),
+      keras.metrics.FalsePositives(name='fp'),
+      keras.metrics.TrueNegatives(name='tn'),
+      keras.metrics.FalseNegatives(name='fn'), 
+      keras.metrics.BinaryAccuracy(name='accuracy'),
+      keras.metrics.Precision(name='precision'),
+      keras.metrics.Recall(name='recall'),
+      keras.metrics.AUC(name='auc'),
+      keras.metrics.AUC(name='prc', curve='PR'), # precision-recall curve
+]
+
+def make_model(metrics=METRICS, output_bias=None):
+  if output_bias is not None:
+    output_bias = tf.keras.initializers.Constant(output_bias)
+  model = keras.Sequential([
+      keras.layers.Dense(
+          16, activation='relu',
+          input_shape=(train_features.shape[-1],)),
+      keras.layers.Dropout(0.5),
+      keras.layers.Dense(1, activation='sigmoid',
+                         bias_initializer=output_bias),
+  ])
+
+  model.compile(
+      optimizer=keras.optimizers.Adam(learning_rate=1e-3),
+      loss=keras.losses.BinaryCrossentropy(),
+      metrics=metrics)
+
+  return model
+```
+
+위와 같은 모델 생성 함수를 통해 다양한 학습 과정을 생성할 수 있다.
+
+모델을 평가하기 위해서 가중치와 손실 등의 기준을 사용하는데, 다양한 학습 과정을 비교하기 위해 초기 모델의 가중치를 체크포인트 파일에 보관하고 학습 전에 각 모델에 로드하여 사용하는 편이 유용하다.
+
+```
+initial_weights = os.path.join(tempfile.mkdtemp(), 'initial_weights')
+model.save_weights(initial_weights)
+model = make_model()
+model.load_weights(initial_weights)
+```
