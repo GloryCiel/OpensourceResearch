@@ -47,7 +47,7 @@ TensorFlow의 라이선스는 아파치 2.0 오픈 소스 라이선스이다.
 
 ****
 
-# 3. 주요기능
+# 3. 주요 기능
 
 ## 3.1. 신경 스타일 전이
 
@@ -316,7 +316,7 @@ BATCH_SIZE = BATCH_SIZE_PER_REPLICA * strategy.num_replicas_in_sync
 ```
 
 
-특성 스케일링 함수 ( [0,255] 범위에서 [0,1] 범위로 이미지 픽셀 값을 정규화하는 함수)를 정의한다.
+특성 스케일링 함수 ( [0,255] 범위에서 [0,1] 범위로 이미지 픽셀값을 정규화하는 함수)를 정의한다.
 ```python
 def scale(image, label):
   image = tf.cast(image, tf.float32)
@@ -428,7 +428,7 @@ with strategy.scope():
 multi_worker_model.fit(multi_worker_dataset, epochs=3, steps_per_epoch=70)
 ```
 
-`global_batch_size = per_worker_batch_size * num_workers`로 설정되어 각 작업자는 작업자의 수에 관계없이 `per_worker_batch_size` 만큼의 예제 배치를 처리하게 된다.
+`global_batch_size = per_worker_batch_size * num_workers`로 설정되어 각 작업자는 작업자의 수와 관계없이 `per_worker_batch_size` 만큼의 예제 배치를 처리하게 된다.
 
 
 
@@ -487,13 +487,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 ```
 
-기본적인 데이터 분류를 위한 pandas, matplotlib와 모델 학습를 위해 keras를, 이후 ROC와 PR-AUC를 통한 평가를 위한 sklearn을 import한다.  
+기본적인 데이터 분류를 위한 pandas, matplotlib와 모델 학습을 위해 keras를, 이후 ROC와 PR-AUC를 통한 평가를 위한 sklearn을 import한다.  
 
 ### 데이터 전처리
 
 Kaggle에서 가져온 데이터는 총 284,807건의 거래에서 492건의 부정거래를 포함하고 있다.
 
-불균형 데이터 분류는 소수 클래스에 해당하는 학습할 샘플이 거의 없기 때문에 모델 학습에 데이터를 적용할 때 주의해야하며, 가능한 많은 샘플을 수집하고, 모델이 소수 클래스를 최대한 효과적으로 활용할 수 있도록 어떤 피쳐가 관련되어 있는지에 주의해야 한다.
+불균형 데이터 분류는 소수 클래스에 해당하는 학습할 샘플이 거의 없기 때문에 모델 학습에 데이터를 적용할 때 주의해야 하며, 가능한 많은 샘플을 수집하고, 모델이 소수 클래스를 최대한 효과적으로 활용할 수 있도록 어떤 피쳐가 관련되어 있는지에 주의해야 한다.
 
 따라서 해당 데이터를 사용하기 이전에 주어진 데이터의 분포를 확인하는 과정이 필요하다.
 
@@ -511,7 +511,7 @@ raw_df[['Time', 'V1', 'V2', 'V3', 'V4', 'V5', 'V26', 'V27', 'V28', 'Amount', 'Cl
 
 이후 데이터셋을 학습, 검증 그리고 테스트 셋으로 분할한다. 
 
-검증 데이터셋은 모델에 적용하는 과정에서 손실을 평가하는데 사용되지만 모델에 직접 검증 데이터를 학습시키지는 않는다. 마찬가지로 테스트 셋 또한 학습된 모델을 평가하기 위해서만 사용된다.
+검증 데이터셋은 모델에 적용하는 과정에서 손실을 평가하는데 사용되지만, 모델에 직접 검증 데이터를 학습시키지는 않는다. 마찬가지로 테스트 셋 또한 학습된 모델을 평가하기 위해서만 사용된다.
 
 이러한 과정은 일반적인 모델링에도 유용하나, 학습 데이터 부족으로 인해 오버피팅이 크게 우려되는 불균형 데이터 셋에서 특히 중요하게 여겨진다.
 
@@ -547,7 +547,7 @@ test_features = np.clip(test_features, -5, 5)
 
 이후 부정 거래와 정상 거래 데이터의 분포를 비교하여 데이터 셋에 대해 확인한다.
 
-다음의 코드를 통해 정규화 된 데이터의 분포를 확인할 수 있다.
+다음의 코드를 통해 정규화된 데이터의 분포를 확인할 수 있다.
 
 ```
 pos_df = pd.DataFrame(train_features[ bool_train_labels], columns=train_df.columns)
@@ -616,9 +616,9 @@ model.load_weights(initial_weights)
 ```
 
 
-모델을 비교하는 방법은 다양하지만 그 중 유용하게 사용하는 방식으로 ROC 곡선과 P-R 곡선(PR-AUC)가 있다.
+모델을 비교하는 방법은 다양하지만, 그 중 유용하게 사용하는 방식으로 ROC 곡선과 P-R 곡선(PR-AUC)가 있다.
 
-두 곡선 모두 *sklearn.metrics* 에서 제공되어 쉽게 사용 가능하다. 아래는 해당 함수의 일반적인 사용법이며 plt에 그리는 방식은 일반적인 방식을 따른다.
+두 곡선 모두 *sklearn.metrics* 에서 제공되어 쉽게 사용할 수 있다. 아래는 해당 함수의 일반적인 사용법이며 plt에 그리는 방식은 일반적인 방식을 따른다.
 
 ```
 def plot_roc(name, labels, predictions, **kwargs):
@@ -642,11 +642,11 @@ def plot_prc(name, labels, predictions, **kwargs):
  이 기능은 입력 이미지를 여러 계층으로 구성된 필터로 스캔하여 특정 맵을 생성하고 이런 필터는 입력된 이미지의 특정 패턴이나 기능을 감지하는 데 사용된다.
  아래의 예제는 TensorFlow의 합성곱 신경망 기능을 응용하여 이미지 분류를 하고 그 학습 결과를 출력하는 예제이다.
  Tensorflow에서는 케라스 Sequential API를 사용하여 간단한 코드를 작성함으로써 모델을 만들고 학습시킬 수 있다.
-모델 훈련에서 사용될 이미지는 [image pair.png]과 같이 단어와, 단어에 맞는 이미지 쌍으로 제공되고 훈련 이미지와 테스트를 위한 이미지로 구분되어진다.
+모델 훈련에서 사용될 이미지는 [image pair.png]과 같이 단어 및 단어에 맞는 이미지 쌍으로 제공되고 훈련 이미지와 테스트를 위한 이미지로 구분된다.
 우선 합성곱 신경망은 이미지의 배치된 크기를 무시하고 이미지의 형상에 대한
 정보(image_height, image_width, color_channels)의 텐서를 사용한다.
 여기에서 텐서는 벡터들의 집합으로 보자.
-텐서를 사용하여 합성곱 층을 만드는데 이 때 입력으로는 CIFAR 이미지 형식인 형상 높이 32, 너비 32, RGB 3쌍의 값을 처리하는 정수 값 3이 정보로 주어진다.
+텐서를 사용하여 합성곱 층을 만드는데 이때 입력으로는 CIFAR 이미지 형식인 형상 높이 32, 너비 32, RGB 3쌍의 값을 처리하는 정수 값 3이 정보로 주어진다.
 구체적인 예제 코드는 아래와 같다.
 ```Python
 model = models.Sequential()
@@ -657,10 +657,10 @@ model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 ```
 
-이 중 높이와 너비 차원은 학습이 진행될 수록 감소하는 경향이 있다. 
+이 중 높이와 너비 차원은 학습이 진행될수록 감소하는 경향이 있다. 
 합성곱 층을 만든 결과는 [convolution layer.png]와 같다.
-기본적인 합성곱 층이 완성 된 이후에는 Dense층을 추가하여야 하는데 Dense층은 위에서 구한 합성곱의 연산 결과를 하나 이상의 Dense 층에 입력으로 주어서 분류를 수행한다.
-여기서의 주의할 점은 Dense층의 오기 전까지의 연산 결과는 차원이 3개이지만 입력으로 넣을 때에는 1차원으로 변환을 수행해야한다는 것이다. 변환을 수행한 이후의 결과는 [added dense.png]과 같다.Dense층 추가의 예제 코드는 아래와 같다.
+기본적인 합성곱 층이 완성된 이후에는 Dense층을 추가하여야 하는데 Dense층은 위에서 구한 합성곱의 연산 결과를 하나 이상의 Dense 층에 입력으로 주어서 분류를 수행한다.
+여기에서 주의할 점은 Dense층의 오기 전까지의 연산 결과는 차원이 3개이지만 입력으로 넣을 때는 1차원으로 변환을 수행해야 한다는 것이다. 변환을 수행한 이후의 결과는 [added dense.png]과 같다. Dense층 추가의 예제 코드는 아래와 같다.
 ```Python
 model.add(layers.Flatten())
 model.add(layers.Dense(64, activation='relu'))
@@ -679,7 +679,7 @@ plt.legend(loc='lower right')
 test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
 ```
 결과에 있어서 accuracy는 모델이 올바르게 데이터를 분류한 비율을 나타내며 val_accuracy는 검증 정확도라고 불리는 모델이 훈련 데이터를 기반으로 학습한 이후 검증 데이터를 사용하여 모델의 성능을 표현할 때 사용하는 지표이다.
-두 accuracy 값이 학습을 진행함에 따라서 증가하는 추이를 보이고 있음을 알수있다.
+두 accuracy 값이 학습을 진행함에 따라서 증가하는 추이를 보이고 있음을 알 수 있다.
 
 <img src="image/JHJ/image pair.png" width="300" height="300">
 <img src="image/JHJ/convolution layer.png" width="400" height="200"><img src="image/JHJ/added dense.png" width="400" height="200"><img src="image/JHJ/conclusion.png" width="400" height="200">
