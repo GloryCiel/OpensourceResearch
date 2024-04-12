@@ -14,7 +14,7 @@ TensorFlow
 > 2. 라이선스
 > 3. 주요기능
 >    - 신경 스타일 전이
->    - 박경민
+>    - 텍스트 분류
 >    - 분산형 학습 기능
 >    - 불균형 데이터 분류
 >    - 합성곱 신경망(Convolutional Neural Network, CNN)과 이미지 분류
